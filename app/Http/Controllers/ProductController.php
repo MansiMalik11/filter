@@ -10,9 +10,19 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $product = Product::with(['size','color'])->get();
+        // $product = Product::with(['size','color'])->get();
+        $query = Product::query();
+        if($request->filled('size_id')){
+            $query->where('size_id' , $request->size_id);
+        }
+
+        if ($request->filled('color_id')) {
+            $query->where('color_id', $request->color_id);
+        }
+
+        $product = $query->get();
         return $product;
     }
 
