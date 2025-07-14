@@ -1,14 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\product;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * GET API filter the products based on the size_id and the color_id
      */
     public function index(Request $request)
     {
@@ -26,12 +25,16 @@ class ProductController extends Controller
         return $product;
     }
 
+    public function view()
+    {
+        return view('products/index');
+    }
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        //
+        return view('products/create');     
     }
 
     /**
@@ -39,7 +42,29 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = validator::make($request->all(),[
+            'name' => 'required',
+            'sku' => 'required|unique:products,sku',
+            'price' => 'required|numeric',
+            'status' => 'required',
+            'image' => 'image:mimes:jpg,png.jpeg|max:2048',
+        ]);
+
+        if($validator->fails()){
+            return redirect(route('products.create'))->withErrors($validator)->withInput();
+        }
+        
+        // dd("sdfddf");die;
+        $product = new Product();
+        $product->name = $request->name;
+        $product->sku = $request->sku;
+        $product->price = $request->price;
+        // $product->image = $request->image;
+        $product->status = $request->status;
+        $product->save();
+        //session()->flash('success', 'Product created successfully..');
+        return redirect(route('products.index'))->with('success', 'Product created successfully');
+
     }
 
     /**
