@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 use App\Models\product;
+use App\Models\color;
+use App\Models\size;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -27,14 +30,17 @@ class ProductController extends Controller
 
     public function view()
     {
-        return view('products/index');
+        $products = Product::with('color','size')->get();
+        return view('products/index',compact('products'));
     }
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        return view('products/create');     
+        $sizes = Size::all();
+        $colors = Color::all();
+        return view('products.create', compact('sizes', 'colors'));   
     }
 
     /**
@@ -44,26 +50,21 @@ class ProductController extends Controller
     {
         $validator = validator::make($request->all(),[
             'name' => 'required',
-            'sku' => 'required|unique:products,sku',
-            'price' => 'required|numeric',
-            'status' => 'required',
-            'image' => 'image:mimes:jpg,png.jpeg|max:2048',
+            'description' => 'required',        
         ]);
 
         if($validator->fails()){
             return redirect(route('products.create'))->withErrors($validator)->withInput();
         }
-        
-        // dd("sdfddf");die;
+
         $product = new Product();
         $product->name = $request->name;
-        $product->sku = $request->sku;
-        $product->price = $request->price;
-        // $product->image = $request->image;
-        $product->status = $request->status;
+        $product->description = $request->description;
+        $product->size_id = $request->size_id;
+        $product->color_id = $request->color_id;
         $product->save();
         //session()->flash('success', 'Product created successfully..');
-        return redirect(route('products.index'))->with('success', 'Product created successfully');
+        return redirect(route('products.view'))->with('success', 'Product created successfully');
 
     }
 
@@ -78,24 +79,36 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(product $product)
+    public function edit(Product $product)
     {
-        //
+        $sizes = Size::all();
+        $colors = Color::all();
+
+        return view('products.edit', compact('product', 'sizes', 'colors'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, product $product)
+    public function update(Request $request, Product $product)
     {
-        //
+        $product->name = $request->name;
+        $product->description = $request->description;
+        $product->size_id = $request->size_id;
+        $product->color_id = $request->color_id;
+        $product->save();
+
+        return redirect()->route('products.view')->with('success', 'Product updated successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(product $product)
+    public function destroy($id)
     {
-        //
+        $product = Product::findOrFail($id);
+        $product->delete();
+
+        return redirect()->route('products.view')->with('success', 'Product deleted successfully');
     }
 }

@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Models;
+use App\Models\color;
+use App\Models\size;
 
 use Illuminate\Database\Eloquent\Model;
 

@@ -27,38 +27,45 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" arial-label="Close"></button>
                 </div>
             @endif
-            <div class="card p-0 mt-3">
+            <div class="card p-0 m-3">
                 <div class="card-header bg-dark text-white">
                     <h3 class="h4">
                         Products
                     </h3>
                 </div>
-                <div class="card-bodyc shadow-lg">
+                <div class="card-bodyc shadow-lg p-4">
                     <table class="table table-striped">
                          <thead>
                             <tr>
                             <th>Id</th>
                             <th>Name</th>
-                            <th>Image</th>
-                            <th>SKU</th>
-                            <th>Price</th>
-                            <th width="120">Status</th>
+                            <th>Description</th>
+                            <th>Size</th>
+                            <th>Color</th>
                             <th width="120" class="text-center">Action</th>
                          </tr>
                          </thead>
                          <tbody>
-                            <tr>
-                            <td>1</td>
-                            <td>Mansi</td>
-                            <td>Image</td>
-                            <td>SKU-22</td>
-                            <td>$100</td>
-                            <td>Active</td>
-                            <td class="text-center">
-                                <a href="#" class="btn btn-dark btn-sm">Edit</a>
-                                <a href="#" class="btn btn-danger btn-sm">Delete</a>
-                            </td>
-                         </tr>
+                            @foreach($products as $product)
+                                <tr>
+                                    <td>{{ $product->id }}</td>
+                                    <td>{{ $product->name }}</td>
+                                    <td>{{ $product->description }}</td>
+                                    <td>{{ $product->size->name??null }}</td>
+                                    <td>{{ $product->color->name??null }}</td>
+                                    <td class="text-center">
+                                        <div class="d-inline-flex gap-1">
+                                            <a href="{{ route('products.edit', $product->id) }}" class="btn btn-dark btn-sm">Edit</a>
+
+                                            <form action="{{ route('products.destroy', $product->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
                          </tbody>
                     </table>
                 </div>

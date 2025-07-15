@@ -13,7 +13,7 @@
     <div class="container">
         <div class="row">
             <div class="d-flex justify-content-end p-0 mt-3">
-                <a href="" class="btn btn-dark">Create</a>
+                <a href="{{ route('products.view') }}" class="btn btn-dark">Back</a>
             </div>
             <div class="card p-0 mt-3">
                 <div class="card-header bg-dark text-white">
@@ -21,7 +21,7 @@
                         Create Products
                     </h3>
                 </div>
-                <div class="card-bodyc shadow-lg">
+                <div class="card-bodyc shadow-lg p-4">
                     <form action="{{ route('products.store') }}" enctype="multipart/form-data" method="post">
                         @csrf
                         <div class="mb-3">
@@ -32,31 +32,29 @@
                             @enderror                        
                         </div>
                         <div class="mb-3">
-                            <label for="image" class="form-label">Image</label>
-                            <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" name="image" placeholder="Image">
-                            @error('image')
+                            <label for="description" class="form-label">Description</label>
+                            <input type="text"  value="{{ old('description') }}" class="form-control @error('description') is-invalid @enderror" id="description" name="description" placeholder="description">
+                            @error('description')
                                 <p class="invalid-feedback">{{ $message }}</p>
                             @enderror
                         </div>
                         <div class="mb-3">
-                            <label for="sku" class="form-label">SKU</label>
-                            <input type="text"  value="{{ old('sku') }}" class="form-control @error('sku') is-invalid @enderror" id="sku" name="sku" placeholder="SKU">
-                            @error('sku')
-                                <p class="invalid-feedback">{{ $message }}</p>
-                            @enderror
+                            <label for="size" class="form-label">Size</label>
+                            <select name="size_id" id="size" class="form-select">
+                                <option value="">-- Select Size --</option>
+                                @foreach($sizes as $size)
+                                    <option value="{{ $size->id }}">{{ $size->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
+
                         <div class="mb-3">
-                            <label for="price" class="form-label">Price</label>
-                            <input type="text"  value="{{ old('price') }}" class="form-control @error('price') is-invalid @enderror" id="price" name="price" placeholder="Price">
-                            @error('price')
-                                <p class="invalid-feedback">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Status</label>
-                            <select name="status" id="status" class="form-select">
-                                <option value="Active">Active</option>
-                                <option value="Inactive">Inactive</option>
+                            <label for="color" class="form-label">Color</label>
+                            <select name="color_id" id="color" class="form-select">
+                                <option value="">-- Select Color --</option>
+                                @foreach($colors as $color)
+                                    <option value="{{ $color->id }}">{{ $color->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <button class="btn btn-dark">Submit</button>
