@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException as ValidationValidationException;
 
 class AuthController extends Controller
 {
@@ -22,12 +24,35 @@ class AuthController extends Controller
         'password' => 'required|string|min:8|confirmed'
        ]);
 
-       User::create($validated);
-       
+       $user = User::create($validated);
+
+       Auth::login($user);
+
+       return redirect()->route('products.view');
     }
 
-    public function login() {
-       
+    public function login(Request $request) {
+       $validated = $request->validate([
+        'email'    => 'required|string',
+        'password' => 'required|string'
+       ]);
+
+       if(Auth::attempt($validated)){
+        $request->session()->regenerate();
+        return redirect()->route('products.view');
+       }
+
+       throw ValidationValidationException::withMessages([
+        'credientials' => 'Sorry , incorrect credientials'
+       ]);
+    }
+
+    public function logout(Request $request) {
+        Auth::logout();
+    
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('show.login');
     }
 
 }

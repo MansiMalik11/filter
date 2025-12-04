@@ -8,20 +8,22 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('data', function() {
-    return "Hello";
+//Auth routes
+Route::post('/logout', [AuthController::class,'logout'])->name('logout');
+
+Route::middleware('guest')->controller(AuthController::class)->group(function(){
+    Route::get('/register', 'showRegister')->name('show.register');
+    Route::get('/login', 'showLogin')->name('show.login');
+    Route::post('/register', 'register')->name('register');
+    Route::post('/login', 'login')->name('login');
 });
 
-//Auth routes
-Route::get('/register', [AuthController::class,'showRegister'])->name('show.register');
-Route::get('/login', [AuthController::class,'showLogin'])->name('show.login');
-Route::post('/register', [AuthController::class,'register'])->name('register');
-Route::post('/login', [AuthController::class,'login'])->name('login');
-
 //Main Routes
-Route::get('/products',[ProductController::class,'view'])->name('products.view');
-Route::get('/products/create',[ProductController::class,'create'])->name('products.create');
-Route::post('/products',[ProductController::class,'store'])->name('products.store');
-Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
-Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
-Route::delete('/products/{id}/delete', [ProductController::class, 'destroy'])->name('products.destroy');
+Route::middleware('auth')->controller(ProductController::class)->group(function(){
+    Route::get('/products','view')->name('products.view');
+    Route::get('/products/create','create')->name('products.create');
+    Route::post('/products','store')->name('products.store');
+    Route::get('/products/{product}/edit', 'edit')->name('products.edit');
+    Route::put('/products/{product}', 'update')->name('products.update');
+    Route::delete('/products/{id}/delete', 'destroy')->name('products.destroy');
+});

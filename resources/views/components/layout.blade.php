@@ -13,10 +13,21 @@
                 <h1 class="h3">Product Management</h1>
             </div>
             <div class="d-flex justify-content-end mt-3 p-2">
-                <a href="{{ route('products.view') }}" class="btn btn-dark m-2" >All Products</a>
-                <a href="{{ route('products.create') }}" class="btn btn-dark m-2"> Create New Product</a>
+                @guest
                 <a href="{{ route('show.login') }}" class="btn btn-dark m-2"> Login</a>
                 <a href="{{ route('show.register') }}" class="btn btn-dark m-2"> Register</a>
+                @endguest
+                @auth
+                <span class="border-r-2 pr-2">
+                    Hi there, {{ Auth::user()->name }}
+                </span>
+                    <a href="{{ route('products.view') }}" class="btn btn-dark m-2" >All Products</a>
+                    <a href="{{ route('products.create') }}" class="btn btn-dark m-2"> Create New Product</a>
+                    <form action="{{ route('logout')}}" class="m-2" method="POST">
+                        @csrf
+                        <button class="btn btn-dark"> Logout </button>
+                    </form>
+                @endauth
             </div>
         </nav>
     </header>
