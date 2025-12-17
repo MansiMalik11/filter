@@ -3,12 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
+use App\Services\Contracts\UserServiceInterface;
+// use App\Services\UserService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException as ValidationValidationException;
 
 class AuthController extends Controller
 {
+    protected $userService;
+
+    public function __construct(UserServiceInterface $userService) {
+        $this->userService = $userService;
+    }
+
     public function showRegister() {
         return view('auth.register');
     }
@@ -18,17 +25,18 @@ class AuthController extends Controller
     }
 
     public function register(Request $request) {
-       $validated = $request->validate([
-        'name'     => 'required|string|max:255',
-        'email'    => 'required|string|unique:users',
-        'password' => 'required|string|min:8|confirmed'
-       ]);
+        echo"dsgyju";die;
+        $validated = $request->validate([
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|string|unique:users',
+            'password' => 'required|string|min:8|confirmed'
+        ]);
 
-       $user = User::create($validated);
+        // $user = User::create($validated);
+        $user = $this->userService->registerUser($validated);
+        Auth::login($user);
 
-       Auth::login($user);
-
-       return redirect()->route('products.view');
+        return redirect()->route('products.view')->with('success', 'Registration successful. Check your email!');
     }
 
     public function login(Request $request) {

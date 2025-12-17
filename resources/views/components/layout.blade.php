@@ -18,9 +18,11 @@
                 <a href="{{ route('show.register') }}" class="btn btn-dark m-2"> Register</a>
                 @endguest
                 @auth
-                <span class="border-r-2 pr-2">
-                    Hi there, {{ Auth::user()->name }}
-                </span>
+                    <div class="flex justify-center w-full m-3">
+                        <span class="text-lg font-semibold bg-gray-100 px-4 py-2 rounded-lg shadow-sm border border-gray-300">
+                            Hi there, <span class="text-blue-600">{{ Auth::user()->name }}</span>
+                        </span>
+                    </div>
                     <a href="{{ route('products.view') }}" class="btn btn-dark m-2" >All Products</a>
                     <a href="{{ route('products.create') }}" class="btn btn-dark m-2"> Create New Product</a>
                     <form action="{{ route('logout')}}" class="m-2" method="POST">
